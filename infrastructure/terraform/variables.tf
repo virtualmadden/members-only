@@ -9,7 +9,7 @@ variable "members_only" {
 data "aws_caller_identity" "current" {}
 
 data "aws_route53_zone" "origin" {
-  name         = "${var.members_only}."
+  name         = "virtualmadden.dev."
   private_zone = false
 }
 
