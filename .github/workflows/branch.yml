@@ -2,7 +2,7 @@ name: Branch
 on:
   push:
     branches:
-    - '!master'
+    - !refs/head/master
   pull_request:
 jobs:
   build:
