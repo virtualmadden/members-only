@@ -1,5 +1,9 @@
-name: Main workflow
-on: [push, pull_request]
+name: Master
+on:
+  push:
+    branches:
+    - master
+    - !refs/pull/*
 jobs:
   build:
     name: Test
