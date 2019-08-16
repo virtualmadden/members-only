@@ -1,14 +1,10 @@
-name: Branch
-on:
-  push:
-    branches:
-    - !refs/head/master
-  pull_request:
+name: Pull Request Workflow
+on: [pull_request]
 jobs:
   build:
     name: Test
     runs-on: ubuntu-latest
-    container: 
+    container:
       image: mcr.microsoft.com/dotnet/core-nightly/sdk:3.0.100-preview8
     steps:
       - name: pull

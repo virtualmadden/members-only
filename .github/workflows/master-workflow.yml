@@ -1,14 +1,13 @@
-name: Master
+name: Master Workflow
 on:
   push:
     branches:
     - master
-    - !refs/pull/*
 jobs:
   build:
     name: Test
     runs-on: ubuntu-latest
-    container: 
+    container:
       image: mcr.microsoft.com/dotnet/core-nightly/sdk:3.0.100-preview8
     steps:
       - name: pull
@@ -45,7 +44,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     needs: [build, initialize]
-    container: 
+    container:
       image: mcr.microsoft.com/dotnet/core-nightly/sdk:3.0.100-preview8
     steps:
       - uses: actions/checkout@master
