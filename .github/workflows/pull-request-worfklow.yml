@@ -1,0 +1,15 @@
+name: Pull Request Workflow
+on: [pull_request]
+jobs:
+  build:
+    name: Test
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/dotnet/core-nightly/sdk:3.0.100-preview8
+    steps:
+      - name: pull
+        uses: actions/checkout@master
+      - name: restore
+        run: dotnet restore
+      - name: test
+        run: dotnet test --no-restore
