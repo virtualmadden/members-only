@@ -1,7 +1,97 @@
 ﻿@page "/"
+@inject HttpClient Http
 
-<h1>Hello, world!</h1>
+<h1>Divvy Stations</h1>
 
-Welcome to your new app.
+@if (stations == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Status</th>
+                <th>Total Docks</th>
+                <th>In-Service Docks</th>
+                <th>Out-Of-Service Docks</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var station in stations)
+            {
+                <tr>
+                    <td>@station.Id</td>
+                    <td>@station.Name</td>
+                    <td>@station.Address</td>
+                    @if (@station.Status != "In Service")
+                    {
+                        <td bgcolor="#FF0000">@station.Status</td>
+                    }
+                    else
+                    {
+                        <td>@station.Status</td>
+                    }
+                    
+                    <td>@station.TotalDocks</td>
+                    <td bgcolor="#00FF00">@station.InServiceDocks</td>
+                    @if (@station.OutOfServiceDocks > 0){
+                        <td bgcolor="#FF0000">@station.OutOfServiceDocks</td>
+                    } else {
+                        <td>@station.OutOfServiceDocks</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@code {
+    IList<Station> stations;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using(var client = new HttpClient())
+        {
+            var response = await client.GetAsync("https://data.cityofchicago.org/resource/bbyy-e7gq.json");
+
+            if(response.StatusCode == HttpStatusCode.OK)
+            {
+                var results = await response.Content.ReadAsStringAsync();
+
+                stations = JsonConvert.DeserializeObject<List<Station>>(results);
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+    }
+
+    public class Station
+    {
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("station_name")]
+        public string Name { get; set; }
+
+        [JsonProperty("address")]
+        public string Address { get; set; }
+
+        [JsonProperty("status")]
+        public string Status { get; set; }
+
+        [JsonProperty("total_docks")]
+        public string TotalDocks { get; set; }
+
+        [JsonProperty("docks_in_service")]
+        public string InServiceDocks { get; set; }
+
+        public int OutOfServiceDocks => Int32.Parse(TotalDocks) - Int32.Parse(InServiceDocks);
+    }
+}
